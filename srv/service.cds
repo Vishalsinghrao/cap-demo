@@ -1,11 +1,15 @@
 using { tii.mr as db } from '../db/schema';
 
 service MaterialRequestService {
-    @odata.draft.enabled
-  entity MaterialRequests as projection on db.MaterialRequests;
-  entity RequestItems     as projection on db.RequestItems;
+   @odata.draft.enabled
+    entity MaterialRequests as projection on db.MaterialRequests actions {
+    action submitRequest();
+    action approveRequest( @title: 'Approver Note' note : String(500) );
+    action rejectRequest ( @title: 'Reason for Rejection' note : String(500) );
+  };
+  entity RequestItems as projection on db.RequestItems;
   @readonly
-  entity Materials        as projection on db.Materials;
+  entity Materials as projection on db.Materials;
 }
 
 // Business rules

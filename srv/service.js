@@ -32,6 +32,39 @@ module.exports = class MaterialRequestService extends cds.ApplicationService {
       }
     });
 
+        // SUBMIT: New → Submitted
+    this.on('submitRequest', MaterialRequests, async (req) => {
+      const request = await SELECT.one.from(req.subject).columns('status');
+      if (request.status !== 'New') {
+        return req.reject(400, `Only New requests can be submitted. Current status: ${request.status}`);
+      }
+      await UPDATE(req.subject).with({ status: 'Submitted' });
+      req.info('Request submitted for approval');
+    });
+
+    // APPROVE: Submitted → Approved
+    this.on('approveRequest', MaterialRequests, async (req) => {
+      const request = await SELECT.one.from(req.subject).columns('status');
+      if (request.status !== 'Submitted') {
+        return req.reject(400, `Only Submitted requests can be approved. Current status: ${request.status}`);
+      }
+      await UPDATE(req.subject).with({ status: 'Approved', approverNote: req.data.note });
+      req.info('Request approved');
+    });
+
+    // REJECT: Submitted → Rejected (reason required)
+    this.on('rejectRequest', MaterialRequests, async (req) => {
+      const request = await SELECT.one.from(req.subject).columns('status');
+      if (request.status !== 'Submitted') {
+        return req.reject(400, `Only Submitted requests can be rejected. Current status: ${request.status}`);
+      }
+      if (!req.data.note) {
+        return req.reject(400, 'Please give a reason for rejection');
+      }
+      await UPDATE(req.subject).with({ status: 'Rejected', approverNote: req.data.note });
+      req.info('Request rejected');
+    });
+
     return super.init();
   }
 };

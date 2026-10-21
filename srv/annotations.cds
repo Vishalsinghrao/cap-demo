@@ -115,3 +115,28 @@ annotate service.MaterialRequests with {
 
 // 7. Value help for materials
 annotate service.Materials with @cds.odata.valuelist;
+
+// 8. Action buttons on the object page header
+annotate service.MaterialRequests with @(
+  UI.Identification: [
+    { $Type: 'UI.DataFieldForAction', Action: 'MaterialRequestService.submitRequest',  Label: 'Submit' },
+    { $Type: 'UI.DataFieldForAction', Action: 'MaterialRequestService.approveRequest', Label: 'Approve' },
+    { $Type: 'UI.DataFieldForAction', Action: 'MaterialRequestService.rejectRequest',  Label: 'Reject' }
+  ]
+);
+
+// 9. When each button is enabled, and what to refresh after clicking
+annotate service.MaterialRequests with actions {
+  submitRequest @(
+    Core.OperationAvailable: { $edmJson: { $Eq: [{ $Path: 'in/status' }, 'New'] } },
+    Common.SideEffects.TargetProperties: ['in/status']
+  );
+  approveRequest @(
+    Core.OperationAvailable: { $edmJson: { $Eq: [{ $Path: 'in/status' }, 'Submitted'] } },
+    Common.SideEffects.TargetProperties: ['in/status', 'in/approverNote']
+  );
+  rejectRequest @(
+    Core.OperationAvailable: { $edmJson: { $Eq: [{ $Path: 'in/status' }, 'Submitted'] } },
+    Common.SideEffects.TargetProperties: ['in/status', 'in/approverNote']
+  );
+};
