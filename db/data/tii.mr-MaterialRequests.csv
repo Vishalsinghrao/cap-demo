@@ -1,0 +1,7 @@
+ID;requestNo;department;plant;neededBy;priority;status;justification;approverNote;prNumber
+10000000-0000-4000-8000-000000000001;MR-1001;Production;1000;2026-10-25;High;New;Steel rods and electrodes for new fabrication batch;;
+10000000-0000-4000-8000-000000000002;MR-1002;Maintenance;1000;2026-10-28;Medium;Submitted;Bearing and bolt replacement for conveyor line 2;;
+10000000-0000-4000-8000-000000000003;MR-1003;Production;1100;2026-10-24;High;Approved;Monthly sheet metal requirement;Approved for urgent batch;
+10000000-0000-4000-8000-000000000004;MR-1004;Stores;1000;2026-11-05;Low;Rejected;Extra packaging stock for festive season;Rejected - enough stock available;
+10000000-0000-4000-8000-000000000005;MR-1005;Maintenance;1100;2026-10-22;High;PRCreated;Hydraulic oil top-up for press machines;Approved;1000045821
+10000000-0000-4000-8000-000000000006;MR-1006;Quality;1000;2026-10-30;Medium;Submitted;Safety gloves for QC inspection team;;

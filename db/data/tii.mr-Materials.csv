@@ -1,0 +1,9 @@
+MaterialNo;description;unit;materialGroup
+MAT-1001;Steel Rod 12mm;KG;RAW
+MAT-1002;Ball Bearing 6204;PC;SPARE
+MAT-1003;Hydraulic Oil ISO 68;L;CONSUM
+MAT-1004;Hex Bolt M10x50;PC;SPARE
+MAT-1005;MS Sheet 2mm;KG;RAW
+MAT-1006;Safety Gloves;PR;SAFETY
+MAT-1007;Corrugated Box Large;PC;PACK
+MAT-1008;Welding Electrode 3.15mm;KG;CONSUM
