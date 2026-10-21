@@ -104,3 +104,14 @@ annotate service.RequestItems with @(
     { $Type: 'UI.ReferenceFacet', Label: 'Material Information', Target: '@UI.FieldGroup#MaterialInfo' }
   ]
 );
+
+// 6. Fields the user cannot edit
+annotate service.MaterialRequests with {
+  requestNo    @readonly;
+  status       @readonly;
+  approverNote @readonly;
+  prNumber     @readonly;
+}
+
+// 7. Value help for materials
+annotate service.Materials with @cds.odata.valuelist;
