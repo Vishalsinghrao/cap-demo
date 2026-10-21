@@ -7,3 +7,16 @@ service MaterialRequestService {
   @readonly
   entity Materials        as projection on db.Materials;
 }
+
+// Business rules
+annotate MaterialRequestService.MaterialRequests with {
+  department @mandatory;
+  plant      @mandatory;
+  neededBy   @mandatory;
+  priority   @mandatory @assert.range;
+}
+
+annotate MaterialRequestService.RequestItems with {
+  material @mandatory;
+  quantity @mandatory;
+}
