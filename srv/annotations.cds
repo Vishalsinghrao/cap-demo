@@ -133,10 +133,15 @@ annotate service.MaterialRequests with actions {
   );
   approveRequest @(
     Core.OperationAvailable: { $edmJson: { $Eq: [{ $Path: 'in/status' }, 'Submitted'] } },
-    Common.SideEffects.TargetProperties: ['in/status', 'in/approverNote']
+    Common.SideEffects.TargetProperties: ['in/status', 'in/approverNote', 'in/prNumber']
   );
   rejectRequest @(
     Core.OperationAvailable: { $edmJson: { $Eq: [{ $Path: 'in/status' }, 'Submitted'] } },
     Common.SideEffects.TargetProperties: ['in/status', 'in/approverNote']
   );
 };
+
+// 10. Edit is only allowed while the request is New
+annotate service.MaterialRequests with @(
+  UI.UpdateHidden: { $edmJson: { $Ne: [{ $Path: 'status' }, 'New'] } }
+);

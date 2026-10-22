@@ -2,7 +2,7 @@ const cds = require('@sap/cds');
 
 module.exports = class MaterialRequestService extends cds.ApplicationService {
   init() {
-    const { MaterialRequests } = this.entities;
+    const { MaterialRequests, RequestItems } = this.entities;
 
     // Before a new request is saved, give it the next request number
     this.before('CREATE', MaterialRequests, async (req) => {
@@ -42,14 +42,46 @@ module.exports = class MaterialRequestService extends cds.ApplicationService {
       req.info('Request submitted for approval');
     });
 
-    // APPROVE: Submitted → Approved
+    // APPROVE: Submitted → Approved → PR created in S/4
     this.on('approveRequest', MaterialRequests, async (req) => {
-      const request = await SELECT.one.from(req.subject).columns('status');
+      const request = await SELECT.one.from(req.subject).columns('ID', 'requestNo', 'plant', 'status');
       if (request.status !== 'Submitted') {
         return req.reject(400, `Only Submitted requests can be approved. Current status: ${request.status}`);
       }
+
+      // 1. Mark as approved
       await UPDATE(req.subject).with({ status: 'Approved', approverNote: req.data.note });
-      req.info('Request approved');
+
+      // 2. Ask S/4 to create the PR
+      try {
+        const s4 = await cds.connect.to('S4PurchaseReq');
+        const { PurchaseRequisitions } = s4.entities;
+        const items = await SELECT.from(RequestItems).where({ request_ID: request.ID });
+
+        await s4.run(INSERT.into(PurchaseRequisitions).entries({
+          Description: `Material request ${request.requestNo}`,
+          Plant: request.plant,
+          RequestReference: request.requestNo,
+          items: items.map((item, index) => ({
+            ItemNo: String((index + 1) * 10).padStart(5, '0'),
+            Material: item.material_MaterialNo,
+            Quantity: item.quantity,
+            Unit: item.unit
+          }))
+        }));
+
+        // 3. Read back the PR number S/4 gave us
+        const pr = await s4.run(
+          SELECT.one.from(PurchaseRequisitions).where({ RequestReference: request.requestNo })
+        );
+
+        // 4. Save it on our request
+        await UPDATE(req.subject).with({ status: 'PRCreated', prNumber: pr.PurchaseRequisition });
+        req.info(`Request approved. Purchase Requisition ${pr.PurchaseRequisition} created in S/4.`);
+
+      } catch (err) {
+        req.warn(`Request approved, but PR creation in S/4 failed: ${err.message}`);
+      }
     });
 
     // REJECT: Submitted → Rejected (reason required)
@@ -63,6 +95,14 @@ module.exports = class MaterialRequestService extends cds.ApplicationService {
       }
       await UPDATE(req.subject).with({ status: 'Rejected', approverNote: req.data.note });
       req.info('Request rejected');
+    });
+
+        // Block editing after submit (server-side safety)
+    this.before('EDIT', MaterialRequests, async (req) => {
+      const request = await SELECT.one.from(req.subject).columns('status');
+      if (request.status !== 'New') {
+        return req.reject(400, `A request cannot be changed after it is submitted. Current status: ${request.status}`);
+      }
     });
 
     return super.init();
