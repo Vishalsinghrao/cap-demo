@@ -22,8 +22,8 @@ annotate service.MaterialRequests with @(
     { Value: department },
     { Value: plant },
     { Value: neededBy },
-    { Value: priority },
-    { Value: status },
+    { Value: priority, Criticality: priorityInfo.criticality },
+    { Value: status,   Criticality: statusInfo.criticality },
     { Value: prNumber }
   ]
 );
@@ -127,8 +127,11 @@ annotate service.MaterialRequests with @(
 
 // 9. When each button is enabled, and what to refresh after clicking
 annotate service.MaterialRequests with actions {
-  submitRequest @(
-    Core.OperationAvailable: { $edmJson: { $Eq: [{ $Path: 'in/status' }, 'New'] } },
+   submitRequest @(
+    Core.OperationAvailable: { $edmJson: { $And: [
+      { $Eq: [{ $Path: 'in/status' }, 'New'] },
+      { $Path: 'in/IsActiveEntity' }
+    ] } },
     Common.SideEffects.TargetProperties: ['in/status']
   );
   approveRequest @(
@@ -141,7 +144,40 @@ annotate service.MaterialRequests with actions {
   );
 };
 
-// 10. Edit is only allowed while the request is New
-annotate service.MaterialRequests with @(
-  UI.UpdateHidden: { $edmJson: { $Ne: [{ $Path: 'status' }, 'New'] } }
-);
+// // 10. Edit is only allowed while the request is New
+// annotate service.MaterialRequests with @(
+//   UI.UpdateHidden: { $edmJson: { $Ne: [{ $Path: 'status' }, 'New'] } }
+// );
+
+// 11. Status: dropdown in filter, show "PR Created" instead of "PRCreated"
+annotate service.MaterialRequests with {
+  status @Common: {
+    Text: statusInfo.name,
+    TextArrangement: #TextOnly,
+    ValueListWithFixedValues: true,
+    ValueList: {
+      CollectionPath: 'Statuses',
+      Parameters: [
+        { $Type: 'Common.ValueListParameterInOut', LocalDataProperty: status, ValueListProperty: 'code' },
+        { $Type: 'Common.ValueListParameterDisplayOnly', ValueListProperty: 'name' }
+      ]
+    }
+  };
+  priority @Common: {
+    ValueListWithFixedValues: true,
+    ValueList: {
+      CollectionPath: 'Priorities',
+      Parameters: [
+        { $Type: 'Common.ValueListParameterInOut', LocalDataProperty: priority, ValueListProperty: 'code' }
+      ]
+    }
+  };
+}
+
+// 12. Labels in the material value help
+annotate service.Materials with {
+  MaterialNo    @title: 'Material';
+  description   @title: 'Description';
+  unit          @title: 'Base Unit';
+  materialGroup @title: 'Material Group';
+}

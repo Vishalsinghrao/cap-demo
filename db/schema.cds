@@ -2,6 +2,8 @@ namespace tii.mr;
 
 using { cuid, managed } from '@sap/cds/common';
 
+using from '@sap/cds/srv/outbox';
+
 entity MaterialRequests : cuid, managed {
     requestNo   : String(10);
     department  : String(40);
@@ -12,6 +14,8 @@ entity MaterialRequests : cuid, managed {
     justification : String(500);
     approverNote : String(500);
     prNumber    : String(10);
+    statusInfo    : Association to Statuses   on statusInfo.code   = status;
+    priorityInfo  : Association to Priorities on priorityInfo.code = priority;
     items       : composition of many RequestItems on items.request = $self; 
 }
 
@@ -30,3 +34,14 @@ entity Materials  {
         materialGroup : String(9);
 }
 
+entity Statuses {
+  key code        : String(10);
+      name        : String(20);
+      criticality : Integer;
+}
+
+entity Priorities {
+  key code        : String(10);
+      name        : String(20);
+      criticality : Integer;
+}

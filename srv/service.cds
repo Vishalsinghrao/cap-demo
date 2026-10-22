@@ -10,6 +10,10 @@ service MaterialRequestService {
   entity RequestItems as projection on db.RequestItems;
   @readonly
   entity Materials as projection on db.Materials;
+  @readonly
+  entity Statuses   as projection on db.Statuses;
+  @readonly
+  entity Priorities as projection on db.Priorities;
 }
 
 // Business rules
