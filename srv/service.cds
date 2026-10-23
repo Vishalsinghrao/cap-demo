@@ -28,3 +28,17 @@ annotate MaterialRequestService.RequestItems with {
   material @mandatory;
   quantity @mandatory;
 }
+
+// Authorization
+annotate MaterialRequestService with @(requires: 'authenticated-user');
+
+annotate MaterialRequestService.MaterialRequests with @(restrict: [
+  { grant: ['READ'],                            to: ['Requester', 'Approver'] },
+  { grant: ['WRITE', 'submitRequest'],          to: 'Requester' },
+  { grant: ['approveRequest', 'rejectRequest'], to: 'Approver' }
+]);
+
+annotate MaterialRequestService.RequestItems with @(restrict: [
+  { grant: ['READ'],  to: ['Requester', 'Approver'] },
+  { grant: ['WRITE'], to: 'Requester' }
+]);

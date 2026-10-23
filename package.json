@@ -12,6 +12,13 @@
   "type": "commonjs",
   "cds": {
     "requires": {
+      "auth": {
+        "kind": "mocked",
+        "users": {
+          "ravi":   { "password": "ravi",   "roles": ["Requester"] },
+          "suresh": { "password": "suresh", "roles": ["Approver"] }
+        }
+      },
       "S4PurchaseReq": {
         "kind": "odata",
         "model": "srv/external/S4PurchaseReq"

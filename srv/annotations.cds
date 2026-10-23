@@ -24,7 +24,8 @@ annotate service.MaterialRequests with @(
     { Value: neededBy },
     { Value: priority, Criticality: priorityInfo.criticality },
     { Value: status,   Criticality: statusInfo.criticality },
-    { Value: prNumber }
+    { Value: prNumber },
+    { Value: createdBy, Label: 'Requested By' }
   ]
 );
 
