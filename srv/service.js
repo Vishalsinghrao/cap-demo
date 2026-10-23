@@ -98,10 +98,28 @@ module.exports = class MaterialRequestService extends cds.ApplicationService {
     });
 
         // Block editing after submit (server-side safety)
+      // Only the requester may edit, and only while New
     this.before('EDIT', MaterialRequests, async (req) => {
+      if (!req.user.is('Requester')) {
+        return req.reject(403, 'Only the requester can edit a request.');
+      }
       const request = await SELECT.one.from(req.subject).columns('status');
       if (request.status !== 'New') {
         return req.reject(400, `A request cannot be changed after it is submitted. Current status: ${request.status}`);
+      }
+    });
+
+        // Who may delete, by status
+    this.before('DELETE', MaterialRequests, async (req) => {
+      const request = await SELECT.one.from(req.subject).columns('status');
+      if (request.status === 'New') {
+        if (!req.user.is('Requester')) {
+          return req.reject(403, 'Only the requester can delete a new request.');
+        }
+      } else {
+        if (!req.user.is('Approver')) {
+          return req.reject(403, 'A submitted request can only be deleted by an approver.');
+        }
       }
     });
 

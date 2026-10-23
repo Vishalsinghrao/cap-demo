@@ -38,7 +38,9 @@ annotate MaterialRequestService with @(requires: 'authenticated-user');
 
 annotate MaterialRequestService.MaterialRequests with @(restrict: [
   { grant: ['READ'],                            to: ['Requester', 'Approver'] },
-  { grant: ['WRITE', 'submitRequest'],          to: 'Requester' },
+  { grant: ['CREATE'],                          to: 'Requester' },
+  { grant: ['UPDATE', 'DELETE'],                to: ['Requester', 'Approver'] },
+  { grant: ['submitRequest'],                   to: 'Requester' },
   { grant: ['approveRequest', 'rejectRequest'], to: 'Approver' }
 ]);
 
