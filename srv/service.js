@@ -105,6 +105,18 @@ module.exports = class MaterialRequestService extends cds.ApplicationService {
       }
     });
 
+        // Tell the UI what the current user is allowed to do
+    this.after('READ', MaterialRequests, (data, req) => {
+      const isRequester = req.user.is('Requester');
+      const isApprover  = req.user.is('Approver');
+      for (const row of Array.isArray(data) ? data : [data]) {
+        if (row) {
+          row.isRequester = isRequester;
+          row.isApprover  = isApprover;
+        }
+      }
+    });
+
     return super.init();
   }
 };

@@ -128,19 +128,25 @@ annotate service.MaterialRequests with @(
 
 // 9. When each button is enabled, and what to refresh after clicking
 annotate service.MaterialRequests with actions {
-   submitRequest @(
+  submitRequest @(
     Core.OperationAvailable: { $edmJson: { $And: [
-      { $Eq: [{ $Path: 'in/status' }, 'New'] },
-      { $Path: 'in/IsActiveEntity' }
+      { $And: [ { $Eq: [{ $Path: 'in/status' }, 'New'] }, { $Path: 'in/IsActiveEntity' } ] },
+      { $Path: 'in/isRequester' }
     ] } },
     Common.SideEffects.TargetProperties: ['in/status']
   );
   approveRequest @(
-    Core.OperationAvailable: { $edmJson: { $Eq: [{ $Path: 'in/status' }, 'Submitted'] } },
+    Core.OperationAvailable: { $edmJson: { $And: [
+      { $Eq: [{ $Path: 'in/status' }, 'Submitted'] },
+      { $Path: 'in/isApprover' }
+    ] } },
     Common.SideEffects.TargetProperties: ['in/status', 'in/approverNote', 'in/prNumber']
   );
   rejectRequest @(
-    Core.OperationAvailable: { $edmJson: { $Eq: [{ $Path: 'in/status' }, 'Submitted'] } },
+    Core.OperationAvailable: { $edmJson: { $And: [
+      { $Eq: [{ $Path: 'in/status' }, 'Submitted'] },
+      { $Path: 'in/isApprover' }
+    ] } },
     Common.SideEffects.TargetProperties: ['in/status', 'in/approverNote']
   );
 };

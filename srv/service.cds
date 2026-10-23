@@ -2,7 +2,11 @@ using { tii.mr as db } from '../db/schema';
 
 service MaterialRequestService {
    @odata.draft.enabled
-    entity MaterialRequests as projection on db.MaterialRequests actions {
+    entity MaterialRequests as projection on db.MaterialRequests {
+    *,
+    virtual null as isRequester : Boolean,
+    virtual null as isApprover  : Boolean
+  } actions {
     action submitRequest();
     action approveRequest( @title: 'Approver Note' note : String(500) );
     action rejectRequest ( @title: 'Reason for Rejection' note : String(500) );
