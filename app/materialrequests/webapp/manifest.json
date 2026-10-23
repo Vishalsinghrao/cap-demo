@@ -1,0 +1,183 @@
+{
+  "_version": "1.89.0",
+  "sap.app": {
+    "id": "tii.mr.materialrequests",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:lrop",
+      "version": "1.33.0",
+      "toolsId": "03067d49-6794-490f-9865-ee80b2472293"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/odata/v4/material-request/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.0"
+        }
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "MaterialRequest-manage": {
+          "semanticObject": "MaterialRequest",
+          "action": "manage",
+          "title": "{{MaterialRequest-manage.flpTitle}}",
+          "subTitle": "{{MaterialRequest-manage.flpSubtitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.153.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.fe.templates": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "tii.mr.materialrequests.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "resources": {
+      "css": []
+    },
+    "routing": {
+      "config": {},
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "MaterialRequestsList",
+          "target": "MaterialRequestsList"
+        },
+        {
+          "pattern": "MaterialRequests({key}):?query:",
+          "name": "MaterialRequestsObjectPage",
+          "target": "MaterialRequestsObjectPage"
+        },
+        {
+          "pattern": "MaterialRequests({key})/items({key2}):?query:",
+          "name": "RequestItemsObjectPage",
+          "target": "RequestItemsObjectPage"
+        }
+      ],
+      "targets": {
+        "MaterialRequestsList": {
+          "type": "Component",
+          "id": "MaterialRequestsList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "contextPath": "/MaterialRequests",
+              "variantManagement": "Page",
+              "navigation": {
+                "MaterialRequests": {
+                  "detail": {
+                    "route": "MaterialRequestsObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.LineItem": {
+                  "tableSettings": {
+                    "type": "ResponsiveTable"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "MaterialRequestsObjectPage": {
+          "type": "Component",
+          "id": "MaterialRequestsObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/MaterialRequests",
+              "navigation": {
+                "items": {
+                  "detail": {
+                    "route": "RequestItemsObjectPage"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "RequestItemsObjectPage": {
+          "type": "Component",
+          "id": "RequestItemsObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/MaterialRequests/items"
+            }
+          }
+        }
+      }
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  },
+  "sap.fe": {
+    "app": {
+      "enableLazyLoading": true
+    }
+  }
+}
