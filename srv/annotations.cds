@@ -188,3 +188,27 @@ annotate service.Materials with {
   unit          @title: 'Base Unit';
   materialGroup @title: 'Material Group';
 }
+
+annotate service.MaterialRequests with {
+  department @Common: {
+    ValueListWithFixedValues: true,
+    ValueList: {
+      CollectionPath: 'Departments',
+      Parameters: [
+        { $Type: 'Common.ValueListParameterInOut', LocalDataProperty: department, ValueListProperty: 'code' }
+      ]
+    }
+  };
+};
+
+annotate service.MaterialRequests with {
+  plant @Common: {
+    ValueListWithFixedValues: true,
+    ValueList: {
+      CollectionPath: 'Plants',
+      Parameters: [
+        { $Type: 'Common.ValueListParameterInOut', LocalDataProperty: plant, ValueListProperty: 'code' }
+      ]
+    }
+  };
+};

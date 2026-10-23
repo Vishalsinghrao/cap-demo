@@ -18,6 +18,10 @@ service MaterialRequestService {
   entity Statuses   as projection on db.Statuses;
   @readonly
   entity Priorities as projection on db.Priorities;
+  @readonly 
+  entity Departments as projection on db.Departments;
+  @readonly
+  entity Plants as projection on db.Plants;
 }
 
 // Business rules
@@ -37,7 +41,8 @@ annotate MaterialRequestService.RequestItems with {
 annotate MaterialRequestService with @(requires: 'authenticated-user');
 
 annotate MaterialRequestService.MaterialRequests with @(restrict: [
-  { grant: ['READ'],                            to: ['Requester', 'Approver'] },
+   { grant: ['READ'],                            to: 'Requester' },
+  { grant: ['READ'],                            to: 'Approver', where: 'status != ''New''' },
   { grant: ['CREATE'],                          to: 'Requester' },
   { grant: ['UPDATE', 'DELETE'],                to: ['Requester', 'Approver'] },
   { grant: ['submitRequest'],                   to: 'Requester' },

@@ -45,3 +45,13 @@ entity Priorities {
       name        : String(20);
       criticality : Integer;
 }
+
+entity Departments {
+  key code : String(40);
+      name : String(40);
+}
+
+entity Plants {
+  key code : String(4);
+      name : String(40);
+}
