@@ -33,10 +33,14 @@
       "S4PurchaseReq": {
         "kind": "odata",
         "model": "srv/external/S4PurchaseReq"
+      },
+      "[hybrid]": {
+        "db": "hana"
       }
     }
   },
   "dependencies": {
+    "@cap-js/hana": "^3",
     "@sap/cds": "^10.1.1"
   },
   "devDependencies": {
